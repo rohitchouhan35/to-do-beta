@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
+    <title>Todo | Daily</title>
+  </head>
+
+  <body>
+    <!-- <div class="stars" id="star"></div> -->
+    <body>
+      <div>
+         <div class="wave"></div>
+         <div class="wave"></div>
+         <div class="wave"></div>
+      </div>
+    </body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">ToDos</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <div class="container my-5">
+        <div class="form-group">
+          <label for="exampleInputEmail1">Task</label>
+          <input type="text" class="form-control" id="title" placeholder="Enter task">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" class="form-control" id="description" placeholder="Write in detail">
+        </div>
+        <button id="add" class="btn btn-primary">Add Task</button>
+        <button id="clr" onClick ="clearStorage" class="btn btn-primary">Clear All</button>
+        
+    </div>
+
+    <table class="table my-6">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Title</th>
+          <th scope="col">Description</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td><button id="del" class="btn btn-primary">Delete</button></td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+    
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+
+            function getAndUpdate(){
+                console.log("Updating List...");
+                tit = document.getElementById('title').value;
+                desc = document.getElementById('description').value;
+                if (localStorage.getItem('itemsJson')==null){
+                    itemJsonArray = [];
+                    itemJsonArray.push([tit, desc]);
+                    localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray))
+                }
+                else{
+                    itemJsonArrayStr = localStorage.getItem('itemsJson')
+                    itemJsonArray = JSON.parse(itemJsonArrayStr);
+                    itemJsonArray.push([tit, desc]);
+                    localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray))
+                }
+                document.getElementById('title').value = "";
+                document.getElementById('description').value = "";
+                update();
+            }
+
+            function update(){
+                if (localStorage.getItem('itemsJson')==null){
+                    itemJsonArray = []; 
+                    localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray))
+                } 
+                else{
+                    itemJsonArrayStr = localStorage.getItem('itemsJson')
+                    itemJsonArray = JSON.parse(itemJsonArrayStr); 
+                }
+                // Populate the table
+                let tableBody = document.getElementById("tableBody");
+                let str = "";
+                itemJsonArray.forEach((element, index) => {
+                    str += `
+                    <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${element[0]}</td>
+                    <td>${element[1]}</td> 
+                    <td><button class="btn btn-sm btn-primary" onclick="deleted(${index})">Delete</button></td> 
+                    </tr>`; 
+                });
+                tableBody.innerHTML = str;
+            }
+            add = document.getElementById("add");
+            add.addEventListener("click", getAndUpdate);
+            update();
+
+            function deleted(itemIndex){
+                console.log("Delete", itemIndex);
+                itemJsonArrayStr = localStorage.getItem('itemsJson')
+                itemJsonArray = JSON.parse(itemJsonArrayStr);
+                // Delete itemIndex element from the array
+                itemJsonArray.splice(itemIndex, 1);
+                localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray));
+                update();
+
+            }
+            function clearStorage(){
+                if(itemJsonArray.length != 0){
+                if (confirm("Do you areally want to clear?")){
+                console.log('Clearing the storage')
+                localStorage.clear();}
+                update()
+                }
+            }
+
+            clr = document.getElementById("clr").addEventListener('click',clearStorage)
+
+    </script>
+
+</body>
+</html>
